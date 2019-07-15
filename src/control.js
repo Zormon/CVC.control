@@ -3,7 +3,7 @@ function $$(id)     { return document.querySelector(id)     }
 function $$$(id)    { return document.querySelectorAll(id)  }
 
 
-let ip = '192.168.1.245'
+let ip = '127.0.0.1:3000'
 let cMostrador = 0
 
 function cambiaTurno(accion, mostrador, valor=0) {
@@ -11,7 +11,7 @@ function cambiaTurno(accion, mostrador, valor=0) {
 }
 
 function showTurno() { 
-    fetch(`http://${ip}/app/turnos.json?r=${Date.now()}`)
+    fetch(`http://${ip}/turno/}`)
     .then(resp => resp.json()).then( function(data) {
         $('num').textContent = data.turno
     })
