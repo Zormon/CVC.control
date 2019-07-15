@@ -1,0 +1,32 @@
+body.config {
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    
+    form#config {
+
+        width: 100%;
+
+        ul {
+            list-style: none;
+            margin: 0; padding: 0;
+    
+            li {
+                margin: 0 1em;
+            }
+        }
+    }
+
+    
+    footer {
+        margin: auto 0 0;
+        padding: 0;
+        background: url(img/FarmavisionNegro.svg) no-repeat center center black;
+        background-size: 70%;
+        height: 20vh;
+        border-top: 3px solid $main-color;
+    }
+}
