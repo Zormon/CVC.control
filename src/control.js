@@ -6,14 +6,14 @@ function $$$(id)    { return document.querySelectorAll(id)  }
 let ip = '127.0.0.1:3000'
 let cMostrador = 0
 
-function cambiaTurno(accion, mostrador, valor=0) {
-    fetch(`http://${ip}/app/ajax.php?modo=turnomatic&accion=${accion}&mostrador=${mostrador}&valor=${valor}`)
+function cambiaTurno(accion, mostrador) {
+    fetch(`http://${ip}/${accion}/${mostrador}`)
 }
 
 function showTurno() { 
     fetch(`http://${ip}/turno/}`)
     .then(resp => resp.json()).then( function(data) {
-        $('num').textContent = data.turno
+        $('num').textContent = data.numero.toString().padStart(2,'0')
     })
   }
 
@@ -24,17 +24,7 @@ function showTurno() {
 const { ipcRenderer } = require('electron')
 
 ipcRenderer.on('turnomatic', (e, arg) => {
-    switch(arg) {
-        case 'sube':
-            cambiaTurno('sube', cMostrador)
-        break
-        case 'baja':
-            cambiaTurno('baja', cMostrador)
-        break
-        case 'reset':
-            cambiaTurno('set', cMostrador, 0)
-        break
-    }
+    cambiaTurno(arg, cMostrador)
 })
 
 /*=====  End of Señales hilo principal  ======*/
@@ -53,6 +43,6 @@ $$$('#tabs button').forEach( el => {
 /*----------  Botones  ----------*/
 $('plus').onmousedown = () => { cambiaTurno('sube', cMostrador) }
 $('minus').onmousedown = () => { cambiaTurno('baja', cMostrador) }
-$('reset').onmousedown = () => { cambiaTurno('set', cMostrador, 0) }
+$('reset').onmousedown = () => { cambiaTurno('reset', cMostrador) }
 
 setInterval(showTurno, 500)
