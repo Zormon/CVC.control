@@ -4,28 +4,18 @@ function $$$(id)    { return document.querySelectorAll(id)  }
 
 
 let ip = '127.0.0.1:3000'
-let cMostrador = 0
+let cola = $$('#tabs button').dataset.id
 
-function cambiaTurno(accion, mostrador) {
-    fetch(`http://${ip}/${accion}/${mostrador}`)
+function cambiaTurno(accion, cola) {
+    wSocket.send( JSON.stringify( {accion: accion, nombre: cola} ) )
 }
-
-function showTurno() { 
-    fetch(`http://${ip}/turno/}`)
-    .then(resp => resp.json()).then( function(data) {
-        $('num').textContent = data.numero.toString().padStart(2,'0')
-    })
-  }
 
 /*=============================================
 =            Señales hilo principal            =
 =============================================*/
 
 const { ipcRenderer } = require('electron')
-
-ipcRenderer.on('turnomatic', (e, arg) => {
-    cambiaTurno(arg, cMostrador)
-})
+ipcRenderer.on('turnomatic', (e, arg) => { cambiaTurno(arg, cola) })
 
 /*=====  End of Señales hilo principal  ======*/
 
@@ -34,15 +24,31 @@ ipcRenderer.on('turnomatic', (e, arg) => {
 $$$('#tabs button').forEach( el => { 
     el.onclick = () => { 
         $$$('#tabs button').forEach( el => { el.className = '' } )
-        cMostrador = el.dataset.id
+        cola = el.dataset.id
         el.className = 'current'
      }
 })
 
 
 /*----------  Botones  ----------*/
-$('plus').onmousedown = () => { cambiaTurno('sube', cMostrador) }
-$('minus').onmousedown = () => { cambiaTurno('baja', cMostrador) }
-$('reset').onmousedown = () => { cambiaTurno('reset', cMostrador) }
+$('plus').onmousedown = () => { cambiaTurno('sube', cola) }
+$('minus').onmousedown = () => { cambiaTurno('baja', cola) }
+$('reset').onmousedown = () => { cambiaTurno('reset', cola) }
 
-setInterval(showTurno, 500)
+
+/*=============================================
+=            Websocket            =
+=============================================*/
+
+var wSocket = new WebSocket(`ws://${ip}`);
+
+wSocket.onopen = () => { }
+wSocket.onerror = (error) => { console.log('websocket error: ' + error) }
+
+wSocket.onmessage = (message) => {
+    let turno = JSON.parse(message.data)
+    $('num').textContent = turno.numero.toString().padStart(2,'0')
+    $('cola').textContent = turno.nombre.toString().padStart(2,'0')
+}
+
+/*=====  End of Websocket  ======*/

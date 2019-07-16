@@ -32,7 +32,7 @@ const initApp = () => {
   appWin.show()
   appWin.on('closed', () => { appWin = null })
   
-  //appWin.webContents.openDevTools()
+  appWin.webContents.openDevTools()
 }
 
 const endApp = () => {  globalShortcut.unregisterAll() }

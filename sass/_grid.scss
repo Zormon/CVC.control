@@ -1,14 +1,14 @@
 body.main {
     header  { grid-area: header }
-    #num    { grid-area: num }
+    #turno  { grid-area: turno }
     #plus   { grid-area: plus }
     #minus  { grid-area: minus }
     #reset  { grid-area: reset }
 
     grid-template: 
         "header header header   header"     .5fr
-        "num    num    plus     plus"       2fr
-        "num    num    minus    reset"      1fr
+        "turno    turno    plus     plus"       2fr
+        "turno    turno    minus    reset"      1fr
         / 1fr   1fr    1fr      1fr
     ;
 }
