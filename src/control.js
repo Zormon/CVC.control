@@ -1,9 +1,9 @@
 function $(id)      { return document.getElementById(id)    }
 function $$(id)     { return document.querySelector(id)     }
 function $$$(id)    { return document.querySelectorAll(id)  }
+const remote = require('electron').remote;
 
 
-let ip = '127.0.0.1:3000'
 let cola = $$('#tabs button').dataset.id
 
 function cambiaTurno(accion, cola) {
@@ -40,7 +40,7 @@ $('reset').onmousedown = () => { cambiaTurno('reset', cola) }
 =            Websocket            =
 =============================================*/
 
-var wSocket = new WebSocket(`ws://${ip}`);
+var wSocket = new WebSocket(`ws://${remote.getGlobal('preferences').ip}`);
 
 wSocket.onopen = () => { }
 wSocket.onerror = (error) => { console.log('websocket error: ' + error) }

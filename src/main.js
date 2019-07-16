@@ -1,8 +1,25 @@
-const { app, BrowserWindow, globalShortcut, Menu } = require('electron')
+const { app, BrowserWindow, globalShortcut, Menu, ipcMain } = require('electron')
+const fs = require("fs")
 // Shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) { app.quit() }
 
-//let preferences
+
+/*=============================================
+=            Preferencias            =
+=============================================*/
+const PREFS_FILE = `${app.getPath('userData')}/preferences.json`
+
+// Defaults
+global.preferences = { ip:'127.0.0.1', colas:2 } 
+if (fs.existsSync(PREFS_FILE)) {
+   global.preferences = fs.readFileSync(PREFS_FILE)
+}
+
+function savePreferences() {
+  fs.writeFileSync(PREFS_FILE, JSON.stringify(preferences))
+}
+
+/*=====  End of Preferencias  ======*/
 
 const menu = [
   {
@@ -14,7 +31,8 @@ const menu = [
   },{
       label: 'Editar',
       submenu: [
-          {label:'Ajustes',   click() { config() }}
+          {label:'Ajustes',   click() { config() }},
+          {label:'Guardar preferencias',   click() { savePreferences() }}
       ]
   }
 ]
@@ -32,7 +50,7 @@ const initApp = () => {
   appWin.show()
   appWin.on('closed', () => { appWin = null })
   
-  appWin.webContents.openDevTools()
+  //appWin.webContents.openDevTools()
 }
 
 const endApp = () => {  globalShortcut.unregisterAll() }
@@ -45,13 +63,18 @@ const config = () => {
   configWin.show()
   
   configWin.on('closed', () => { configWin = null })
-  //configWin.webContents.openDevTools()
-}
-
-function savePreferences() {
-  //fs.writeFileSync(`app.getPath('userData')${preferences.json}`, JSON.stringify(preferences))
+  configWin.webContents.openDevTools()
 }
 
 app.on('will-quit', endApp)
 app.on('window-all-closed', () => { app.quit() })
 app.on('ready', initApp)
+
+ipcMain.on('async', (e, arg) => {
+  switch (arg) {
+    case 'savePrefs':
+      console.log('guardar:' + global.preferences)
+      savePreferences()
+    break;
+  }
+})
