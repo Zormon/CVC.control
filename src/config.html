@@ -11,14 +11,23 @@
           <ul>
               <li>
                 <label for="ip">Direccion IP del turnomatic</label>
-                <input type="text" id="ip" name="ip">
+                <input type="text" id="ip1">
+                <input type="text" id="ip2">
               </li>
               <li>
                 <label for="mostradores">Número de mostradores</label>
-                <input type="radio" name="mostradores" id="mostradores" value="1">
-                <input type="radio" name="mostradores" id="mostradores" value="2">
-                <input type="radio" name="mostradores" id="mostradores" value="3">
-                <input type="radio" name="mostradores" id="mostradores" value="4">
+                <input type="radio" name="ncolas" value="1">
+                <input type="radio" name="ncolas" value="2">
+                <input type="radio" name="ncolas" value="3">
+                <input type="radio" name="ncolas" value="4">
+              </li>
+              <li>
+                <label for="fosusOnKey">Mostrar ventana al enviar comando</label>
+                <input type="checkbox" id="fosusOnKey">
+              </li>
+              <li>
+                <label for="notifications">Mostrar notificaciones</label>
+                <input type="checkbox" id="notifications" disabled>
               </li>
           </ul>
         </form>

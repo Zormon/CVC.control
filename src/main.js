@@ -7,35 +7,40 @@ if (require('electron-squirrel-startup')) { app.quit() }
 /*=============================================
 =            Preferencias            =
 =============================================*/
-const PREFS_FILE = `${app.getPath('userData')}/preferences.json`
+const PREFS_FILE = `${app.getPath('userData')}/appConf.json`
 
 // Defaults
-global.preferences = { ip:'127.0.0.1', colas:2 } 
+global.appConf = { ip:'127.0.0.1', colas:2, focusOnShortcut:false }
+
 if (fs.existsSync(PREFS_FILE)) {
-   global.preferences = fs.readFileSync(PREFS_FILE)
+   global.appConf = JSON.parse(fs.readFileSync(PREFS_FILE, 'utf8'))
 }
 
 function savePreferences() {
-  fs.writeFileSync(PREFS_FILE, JSON.stringify(preferences))
+  fs.writeFileSync(PREFS_FILE, JSON.stringify(global.appConf), 'utf8')
 }
 
 /*=====  End of Preferencias  ======*/
 
+/*=============================================
+=            Menu            =
+=============================================*/
 const menu = [
   {
       label: 'Archivo',
       submenu: [
-          {label:'Recargar',  click() {app.reload()} },
+          {label:'Recargar',  click() {app.relaunch(); app.exit()} },
           {label:'Salir',     click() {app.quit()} }
       ]
   },{
       label: 'Editar',
       submenu: [
           {label:'Ajustes',   click() { config() }},
-          {label:'Guardar preferencias',   click() { savePreferences() }}
       ]
   }
 ]
+/*=====  End of Menu  ======*/
+
 
 const initApp = () => {
   let appWin = new BrowserWindow({width: 600,height: 300, show:false, webPreferences: { nodeIntegration: true}})
@@ -50,7 +55,7 @@ const initApp = () => {
   appWin.show()
   appWin.on('closed', () => { appWin = null })
   
-  //appWin.webContents.openDevTools()
+  appWin.webContents.openDevTools()
 }
 
 const endApp = () => {  globalShortcut.unregisterAll() }
@@ -70,11 +75,7 @@ app.on('will-quit', endApp)
 app.on('window-all-closed', () => { app.quit() })
 app.on('ready', initApp)
 
-ipcMain.on('async', (e, arg) => {
-  switch (arg) {
-    case 'savePrefs':
-      console.log('guardar:' + global.preferences)
-      savePreferences()
-    break;
-  }
+ipcMain.on('savePrefs', (e, arg) => {
+    global.appConf = arg
+    savePreferences()
 })

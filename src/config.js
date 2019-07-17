@@ -1,11 +1,16 @@
 function $(id)      { return document.getElementById(id)    }
+function $$(id)     { return document.querySelector(id)     }
+
 const remote = require('electron').remote
 const { ipcRenderer } = require('electron')
 
+var prefs = remote.getGlobal('appConf')
+
 function savePreferences() {
-    console.log(remote.getGlobal('preferences'))
-    remote.getGlobal('preferences').ip = '192.168.1.245'
-    ipcRenderer.send('async', 'savePrefs')
+    prefs.ip = $('ip1').value + '.' + $('ip2').value
+    prefs.colas = $$('input[name="ncolas"]:checked').value
+    prefs.focusOnShortcut = false
+    ipcRenderer.send('savePrefs', prefs )
 }
 
 $('save').onclick = ()=> { savePreferences() }

@@ -40,7 +40,7 @@ $('reset').onmousedown = () => { cambiaTurno('reset', cola) }
 =            Websocket            =
 =============================================*/
 
-var wSocket = new WebSocket(`ws://${remote.getGlobal('preferences').ip}`);
+var wSocket = new WebSocket(`ws://${remote.getGlobal('appConf').ip}`);
 
 wSocket.onopen = () => { }
 wSocket.onerror = (error) => { console.log('websocket error: ' + error) }
