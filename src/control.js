@@ -1,7 +1,7 @@
+const { ipcRenderer, remote } = require('electron')
 function $(id)      { return document.getElementById(id)    }
 function $$(id)     { return document.querySelector(id)     }
 function $$$(id)    { return document.querySelectorAll(id)  }
-const remote = require('electron').remote;
 
 
 let cola = $$('#tabs button').dataset.id
@@ -14,7 +14,7 @@ function cambiaTurno(accion, cola) {
 =            Señales hilo principal            =
 =============================================*/
 
-const { ipcRenderer } = require('electron')
+
 ipcRenderer.on('turnomatic', (e, arg) => { cambiaTurno(arg, cola) })
 
 /*=====  End of Señales hilo principal  ======*/
@@ -40,7 +40,7 @@ $('reset').onmousedown = () => { cambiaTurno('reset', cola) }
 =            Websocket            =
 =============================================*/
 
-var wSocket = new WebSocket(`ws://${remote.getGlobal('appConf').ip}`);
+var wSocket = new WebSocket(`ws://${remote.getGlobal('appConf').ip}:3000`);
 
 wSocket.onopen = () => { }
 wSocket.onerror = (error) => { console.log('websocket error: ' + error) }
