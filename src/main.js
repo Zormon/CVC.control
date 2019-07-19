@@ -3,6 +3,7 @@ const fs = require("fs")
 // Shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) { app.quit() }
 
+var appWin
 
 /*=============================================
 =            Preferencias            =
@@ -10,14 +11,23 @@ if (require('electron-squirrel-startup')) { app.quit() }
 const PREFS_FILE = `${app.getPath('userData')}/appConf.json`
 
 // Defaults
-global.appConf = { ip:'127.0.0.1', colas:2, focusOnShortcut:false }
+global.appConf = { 
+  ip:'127.0.0.1', 
+  colas:['Mostrador 1','Mostrador 2','Mostrador 3'],
+  focusOnShortcut:false }
 
 if (fs.existsSync(PREFS_FILE)) {
    global.appConf = JSON.parse(fs.readFileSync(PREFS_FILE, 'utf8'))
 }
 
-function savePreferences() {
-  fs.writeFileSync(PREFS_FILE, JSON.stringify(global.appConf), 'utf8')
+function reloadApp() {
+  app.relaunch()
+  app.exit()
+}
+
+function turno(accion) {
+  appWin.webContents.send('turnomatic', accion)
+  if (appConf.focusOnShortcut) { appWin.focus() }
 }
 
 /*=====  End of Preferencias  ======*/
@@ -29,8 +39,8 @@ const menu = [
   {
       label: 'Archivo',
       submenu: [
-          {label:'Recargar',  click() {app.relaunch(); app.exit()} },
-          {label:'Salir',     click() {app.quit()} }
+          {label:'Recargar',  click() { reloadApp() } },
+          {label:'Salir',     click() { app.quit() } }
       ]
   },{
       label: 'Editar',
@@ -43,14 +53,14 @@ const menu = [
 
 
 const initApp = () => {
-  let appWin = new BrowserWindow({width: 600,height: 300, show:false, webPreferences: { nodeIntegration: true}})
+  appWin = new BrowserWindow({width: 600,height: 300, show:false, webPreferences: { nodeIntegration: true}})
   
   appWin.loadURL(`file://${__dirname}/index.html`)
   appWin.setMenu( Menu.buildFromTemplate(menu) )
   
-  globalShortcut.register('CommandOrControl+1', () => { appWin.webContents.send('turnomatic', 'sube') })
-  globalShortcut.register('CommandOrControl+2', () => { appWin.webContents.send('turnomatic', 'baja') })
-  globalShortcut.register('CommandOrControl+3', () => { appWin.webContents.send('turnomatic', 'reset') })
+  globalShortcut.register('CommandOrControl+1', () => { turno('sube') })
+  globalShortcut.register('CommandOrControl+2', () => { turno('baja') })
+  globalShortcut.register('CommandOrControl+3', () => { turno('reset') })
   
   appWin.show()
   appWin.on('closed', () => { appWin = null })
@@ -77,5 +87,6 @@ app.on('ready', initApp)
 
 ipcMain.on('savePrefs', (e, arg) => {
     global.appConf = arg
-    savePreferences()
+    fs.writeFileSync(PREFS_FILE, JSON.stringify(global.appConf), 'utf8')
+    appWin.reload()
 })

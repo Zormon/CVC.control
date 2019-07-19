@@ -4,51 +4,73 @@ function $$(id)     { return document.querySelector(id)     }
 function $$$(id)    { return document.querySelectorAll(id)  }
 
 
-let cola = $$('#tabs button').dataset.id
-
-function cambiaTurno(accion, cola) {
-    wSocket.send( JSON.stringify( {accion: accion, nombre: cola} ) )
-}
+var wSocket
+let cola = 'Mostrador 1'
+const colas = remote.getGlobal('appConf').colas
 
 /*=============================================
-=            Señales hilo principal            =
+=            Funciones            =
 =============================================*/
 
+    function cambiaTurno(accion, cola) {
+        wSocket.send( JSON.stringify( {accion: accion, nombre: cola} ) )
+    }
 
-ipcRenderer.on('turnomatic', (e, arg) => { cambiaTurno(arg, cola) })
+    function webSocket() {
+        wSocket = new WebSocket(`ws://${remote.getGlobal('appConf').ip}:3000`);
 
-/*=====  End of Señales hilo principal  ======*/
+        wSocket.onmessage = (message) => {
+            let turno = JSON.parse(message.data)
+            $('num').textContent = turno.numero.toString().padStart(2,'0')
+            $('cola').textContent = turno.nombre.toString().padStart(2,'0')
+        }
 
+        
 
-/*----------  Tabs  ----------*/
-$$$('#tabs button').forEach( el => { 
-    el.onclick = () => { 
-        $$$('#tabs button').forEach( el => { el.className = '' } )
-        cola = el.dataset.id
-        el.className = 'current'
-     }
-})
+    }
 
-
-/*----------  Botones  ----------*/
-$('plus').onmousedown = () => { cambiaTurno('sube', cola) }
-$('minus').onmousedown = () => { cambiaTurno('baja', cola) }
-$('reset').onmousedown = () => { cambiaTurno('reset', cola) }
+/*=====  End of Funciones  ======*/
 
 
 /*=============================================
-=            Websocket            =
+=            Señales IPC            =
 =============================================*/
 
-var wSocket = new WebSocket(`ws://${remote.getGlobal('appConf').ip}:3000`);
+    ipcRenderer.on('turnomatic', (e, arg) => { cambiaTurno(arg, cola) })
 
-wSocket.onopen = () => { }
-wSocket.onerror = (error) => { console.log('websocket error: ' + error) }
+/*=====  End of Señales IPC  ======*/
 
-wSocket.onmessage = (message) => {
-    let turno = JSON.parse(message.data)
-    $('num').textContent = turno.numero.toString().padStart(2,'0')
-    $('cola').textContent = turno.nombre.toString().padStart(2,'0')
-}
 
-/*=====  End of Websocket  ======*/
+/*=============================================
+=            MAIN            =
+=============================================*/
+
+    webSocket()    
+
+    /*----------  Tabs  ----------*/
+
+    for (let i=0; i < colas.length; i++) {
+        let btn = document.createElement('button')
+        btn.dataset.id =  colas[i]
+        btn.textContent = colas[i]
+        if (i == 0) { btn.className = 'current' }
+    
+        $('tabs').appendChild(btn)
+    }
+
+    $$$('#tabs button').forEach( el => { 
+        el.onclick = () => { 
+            $$$('#tabs button').forEach( el => { el.className = '' } )
+            cola = el.dataset.id
+            el.className = 'current'
+        }
+    })
+
+    /*----------  Botones  ----------*/
+
+    $('plus').onmousedown = () => { cambiaTurno('sube', cola) }
+    $('minus').onmousedown = () => { cambiaTurno('baja', cola) }
+    $('reset').onmousedown = () => { cambiaTurno('reset', cola) }
+
+/*=====  End of MAIN  ======*/
+

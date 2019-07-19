@@ -8,28 +8,35 @@
   </head>
   <body class="config">
       <form id="config">
-          <ul>
-              <li>
-                <label for="ip">Direccion IP del turnomatic</label>
-                <input type="text" id="ip1">
-                <input type="text" id="ip2">
-              </li>
-              <li>
-                <label for="mostradores">Número de mostradores</label>
-                <input type="radio" name="ncolas" value="1">
-                <input type="radio" name="ncolas" value="2">
-                <input type="radio" name="ncolas" value="3">
-                <input type="radio" name="ncolas" value="4">
-              </li>
-              <li>
-                <label for="fosusOnKey">Mostrar ventana al enviar comando</label>
-                <input type="checkbox" id="fosusOnKey">
-              </li>
-              <li>
-                <label for="notifications">Mostrar notificaciones</label>
-                <input type="checkbox" id="notifications" disabled>
-              </li>
-          </ul>
+        <div>
+          <label for="ip">Direccion IP del turnomatic</label>
+          <input type="text" id="ip">
+        </div>
+
+        <div>
+            <label for="ncolas">Número de colas</label>
+            <select id="ncolas">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+            </select>
+
+            <div id="colas"></div>
+        </div>
+
+        <div>
+            <label for="fosusOnKey">Mostrar ventana al enviar comando</label>
+            <input type="checkbox" id="fosusOnKey">
+        </div>
+
+        <div>
+            <label for="notifications">Mostrar notificaciones</label>
+            <input type="checkbox" id="notifications" disabled>
+        </div>
+
         </form>
         <button id="save">Aplicar</button>
 

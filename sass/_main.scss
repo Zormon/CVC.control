@@ -3,68 +3,70 @@
 body.main {
     padding: 0;
     margin: 0;
-    display: grid;
     overflow: hidden;
 
-    height: 100vh;
-
-    header {
-        display: flex;
-        flex-direction: row;
-        button {
-            height: 100%;
-            flex: 1;
+    main {
+        display: grid;
+        height: 100vh;
+        header {
+            display: flex;
+            flex-direction: row;
+            button {
+                height: 100%;
+                flex: 1;
+                background-color: $light-color;
+                color: $dark-color;
+                border: 0;
+                box-sizing: border-box;
+    
+    
+                &.current {
+                    background-color: darken($main-color, 20%);
+                    color: white;
+                }
+    
+                cursor: pointer;
+            }
+        }
+    
+        > #turno {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            background-color: $dark-color;
+            color: $light-color;
+            
+            #num {
+                font-size: 10em;
+                line-height: 1em;
+            }
+    
+            #cola {
+                font-size: 2em;
+            }
+        }
+    
+        // Botones de accion
+        > button {
+            font-size: 2em;
+            border: 4px solid $main-color;
+            border-radius: .4em;
             background-color: $light-color;
-            color: $dark-color;
-            border: 0;
-            box-sizing: border-box;
-
-
-            &.current {
-                background-color: darken($main-color, 20%);
+            color: $main-color;
+            margin: .1em;
+    
+            &:hover {
+                background-color: lighten($main-color, 40%);
+                cursor: pointer;
+            }
+    
+            &:active {
+                background-color: $main-color;
                 color: white;
             }
-
-            cursor: pointer;
         }
     }
-
-    > #turno {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        background-color: $dark-color;
-        color: $light-color;
-        
-        #num {
-            font-size: 10em;
-            line-height: 1em;
-        }
-
-        #cola {
-            font-size: 2em;
-        }
-    }
-
-    // Botones de accion
-    > button {
-        font-size: 2em;
-        border: 4px solid $main-color;
-        border-radius: .4em;
-        background-color: $light-color;
-        color: $main-color;
-        margin: .1em;
-
-        &:hover {
-            background-color: lighten($main-color, 40%);
-            cursor: pointer;
-        }
-
-        &:active {
-            background-color: $main-color;
-            color: white;
-        }
-    }
+    
 }
