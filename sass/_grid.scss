@@ -6,7 +6,7 @@ body.main > main {
     #reset  { grid-area: reset }
 
     grid-template: 
-        "header header header   header"     .5fr
+        "header header header   header"     .7fr
         "turno    turno    plus     plus"       2fr
         "turno    turno    minus    reset"      1fr
         / 1fr   1fr    1fr      1fr
