@@ -4,6 +4,7 @@ const fs = require("fs")
 if (require('electron-squirrel-startup')) { app.quit() }
 
 var appWin
+var configWin = null
 
 /*=============================================
 =            Preferencias            =
@@ -45,7 +46,10 @@ const menu = [
   },{
       label: 'Editar',
       submenu: [
-          {label:'Ajustes',   click() { config() }},
+          {label:'Ajustes',   click() {
+            if (configWin == null)  { config() } 
+            else                    { configWin.focus() } 
+          }},
       ]
   }
 ]
@@ -63,26 +67,24 @@ const initApp = () => {
   globalShortcut.register('CommandOrControl+3', () => { turno('reset') })
   
   appWin.show()
-  appWin.on('closed', () => { appWin = null })
+  appWin.on('closed', () => { app.quit() })
   
   appWin.webContents.openDevTools()
 }
 
-const endApp = () => {  globalShortcut.unregisterAll() }
 
 const config = () => {
-  let configWin = new BrowserWindow({width: 400,height: 500, show:false, webPreferences: { nodeIntegration: true }})
+  configWin = new BrowserWindow({width: 400,height: 600, show:false, webPreferences: { nodeIntegration: true, parent: appWin }})
   configWin.loadURL(`file://${__dirname}/config.html`)
   configWin.setMenu( null )
   configWin.setResizable( false )
   configWin.show()
   
   configWin.on('closed', () => { configWin = null })
+
   configWin.webContents.openDevTools()
 }
 
-app.on('will-quit', endApp)
-app.on('window-all-closed', () => { app.quit() })
 app.on('ready', initApp)
 
 ipcMain.on('savePrefs', (e, arg) => {

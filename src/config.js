@@ -26,6 +26,10 @@ function printColas() {
     for (let i=0; i< $('ncolas').value; i++) {
         let el = document.createElement('input')
         el.type = 'text'
+        el.pattern = '[A-Za-z0-9 ]{1,12}'
+        el.placeholder = `Mostrador ${i}`
+        el.required = true
+        el.title = 'Solo texto, espacios y numeros. 12 caracteres máximo'
         if (typeof prefs.colas[i] != 'undefined') { el.value = prefs.colas[i] }
         else                                      { el.value = `Mostrador ${i+1}` }
         
@@ -33,9 +37,14 @@ function printColas() {
     }
 }
 
-$('save').onclick = ()=> { 
-    savePreferences()
-    remote.getCurrentWindow().close()
+$('save').onclick = (e)=> {
+    e.preventDefault()
+    if ( $('config').checkValidity() ) {
+        savePreferences()
+        remote.getCurrentWindow().close()
+    } else { 
+        $('config').reportValidity()
+    }
 }
 
 $('ncolas').onchange = ()=> { printColas() }

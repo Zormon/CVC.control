@@ -10,10 +10,10 @@
       <form id="config">
         <div>
           <label for="ip">Direccion IP del turnomatic</label>
-          <input type="text" id="ip">
+          <input type="text" id="ip" pattern="((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$" title="Solo direcciones IPv4" placeholder="127.0.0.1" required>
         </div>
 
-        <div>
+        <div class="colas">
             <label for="ncolas">Número de colas</label>
             <select id="ncolas">
               <option value="1">1</option>
@@ -28,17 +28,17 @@
         </div>
 
         <div>
-            <label for="fosusOnKey">Mostrar ventana al enviar comando</label>
-            <input type="checkbox" id="fosusOnKey">
+          <input type="checkbox" id="fosusOnKey">
+          <label for="fosusOnKey">Mostrar ventana al enviar comando</label>
         </div>
 
         <div>
-            <label for="notifications">Mostrar notificaciones</label>
-            <input type="checkbox" id="notifications" disabled>
+          <input type="checkbox" id="notifications" disabled>
+          <label for="notifications">Mostrar notificaciones</label>
         </div>
 
-        </form>
         <button id="save">Aplicar</button>
+      </form>
 
       <footer></footer>
   </body>
