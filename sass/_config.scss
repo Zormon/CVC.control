@@ -64,6 +64,21 @@ body.config {
         top: 0.2em;
     }
 
+    input[type="checkbox"]:not(:disabled):hover + label::before { border-color: $dark-color; }
+    input[type="checkbox"]:not(:disabled):active + label::before { 
+        background-color: darken($light-color, 40%);
+        border-color: darken($light-color, 40%);
+    }
+
+    input[type="checkbox"]:checked + label::before {
+        background-color: $main-color;
+        border-color: $main-color; 
+    }
+
+    input:disabled + label { 
+        opacity: .5;
+     }
+
     
     footer {
         margin: auto 0 0;

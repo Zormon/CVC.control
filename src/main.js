@@ -1,4 +1,4 @@
-const { app, BrowserWindow, globalShortcut, Menu, ipcMain } = require('electron')
+const { app, BrowserWindow, globalShortcut, Menu, ipcMain, dialog } = require('electron')
 const fs = require("fs")
 // Shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) { app.quit() }
@@ -9,16 +9,24 @@ var configWin = null
 /*=============================================
 =            Preferencias            =
 =============================================*/
+
 const PREFS_FILE = `${app.getPath('userData')}/appConf.json`
 
 // Defaults
-global.appConf = { 
+const DEFAULTS = 
+{ 
   ip:'127.0.0.1', 
   colas:['Mostrador 1','Mostrador 2','Mostrador 3'],
-  focusOnShortcut:false }
+  focusOnShortcut:false 
+}
+global.appConf = DEFAULTS
 
 if (fs.existsSync(PREFS_FILE)) {
-   global.appConf = JSON.parse(fs.readFileSync(PREFS_FILE, 'utf8'))
+  try {
+    global.appConf = JSON.parse(fs.readFileSync(PREFS_FILE, 'utf8'))
+  } catch (error) {
+    restore(false)
+  }
 }
 
 function reloadApp() {
@@ -33,15 +41,20 @@ function turno(accion) {
 
 /*=====  End of Preferencias  ======*/
 
+
+
+
 /*=============================================
 =            Menu            =
 =============================================*/
+
 const menu = [
   {
+      role: 'appMenu',
       label: 'Archivo',
       submenu: [
           {label:'Recargar',  click() { reloadApp() } },
-          {label:'Salir',     click() { app.quit() } }
+          {role: 'quit', label:'Salir'},
       ]
   },{
       label: 'Editar',
@@ -50,17 +63,55 @@ const menu = [
             if (configWin == null)  { config() } 
             else                    { configWin.focus() } 
           }},
+          {type: 'separator'},
+          {label:'Restaurar parámetros',     click() { restoreDialog() } }
       ]
   }
 ]
+
 /*=====  End of Menu  ======*/
 
 
-const initApp = () => {
+
+
+/*=============================================
+=            Funciones            =
+=============================================*/
+
+function savePrefs(prefs, reload=true) {
+  global.appConf = prefs
+  fs.writeFileSync(PREFS_FILE, JSON.stringify(global.appConf), 'utf8')
+  
+  if (reload) appWin.reload()
+}
+
+function restore(reload=true) {
+  savePrefs(DEFAULTS, reload)
+}
+
+function restoreDialog() {
+  const options  = {
+    buttons: ['Cancelar','Aceptar'],
+    message: '¿Restaurar los valores por defecto de la configuración de la aplicación?'
+   }
+  dialog.showMessageBox(options, (resp) => { if (resp) restore()  }) // Ha pulsado aceptar
+}
+
+/*=====  End of Funciones  ======*/
+
+
+
+
+/*=============================================
+=            Ventanas            =
+=============================================*/
+
+function initApp() {
   appWin = new BrowserWindow({width: 600,height: 300, show:false, webPreferences: { nodeIntegration: true}})
   
   appWin.loadURL(`file://${__dirname}/index.html`)
   appWin.setMenu( Menu.buildFromTemplate(menu) )
+  appWin.setResizable( false )
   
   globalShortcut.register('CommandOrControl+1', () => { turno('sube') })
   globalShortcut.register('CommandOrControl+2', () => { turno('baja') })
@@ -69,11 +120,11 @@ const initApp = () => {
   appWin.show()
   appWin.on('closed', () => { app.quit() })
   
-  appWin.webContents.openDevTools()
+  //appWin.webContents.openDevTools()
 }
 
 
-const config = () => {
+function config() {
   configWin = new BrowserWindow({width: 400,height: 600, show:false, webPreferences: { nodeIntegration: true, parent: appWin }})
   configWin.loadURL(`file://${__dirname}/config.html`)
   configWin.setMenu( null )
@@ -85,10 +136,10 @@ const config = () => {
   configWin.webContents.openDevTools()
 }
 
-app.on('ready', initApp)
+/*=====  End of Ventanas  ======*/
 
-ipcMain.on('savePrefs', (e, arg) => {
-    global.appConf = arg
-    fs.writeFileSync(PREFS_FILE, JSON.stringify(global.appConf), 'utf8')
-    appWin.reload()
-})
+
+
+
+app.on('ready', initApp)
+ipcMain.on('savePrefs', (e, arg) => { savePrefs(arg) })
