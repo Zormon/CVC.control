@@ -118,7 +118,7 @@ function initApp() {
   appWin.show()
   appWin.on('closed', () => { app.quit() })
   
-  appWin.webContents.openDevTools()
+  //appWin.webContents.openDevTools()
 
   if (fs.existsSync(PREFS_FILE)) {
     try {
