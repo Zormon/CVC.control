@@ -1,0 +1,28 @@
+body {
+    #errorModal {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100vw; height: 100vh;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+
+        > div {
+            width: 70%;
+            height: 80%;
+
+            background-color: white;
+        }
+    }
+
+    &.error {
+        > #errorModal { visibility: visible; }
+    }
+
+    &:not(.error) {
+        > #errorModal { visibility: hidden; }
+    }
+    
+}

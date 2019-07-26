@@ -21,14 +21,6 @@ const DEFAULTS =
 }
 global.appConf = DEFAULTS
 
-if (fs.existsSync(PREFS_FILE)) {
-  try {
-    global.appConf = JSON.parse(fs.readFileSync(PREFS_FILE, 'utf8'))
-  } catch (error) {
-    restore(false)
-  }
-}
-
 function reloadApp() {
   app.relaunch()
   app.exit()
@@ -67,6 +59,13 @@ const menu = [
           {label:'Restaurar parámetros',     click() { restoreDialog() } }
       ]
   }
+  ,{
+    role: 'help',
+    label: 'Ayuda',
+    submenu: [
+        {role: 'about', label:'Información',     click() { about() } }
+    ]
+}
 ]
 
 /*=====  End of Menu  ======*/
@@ -81,20 +80,19 @@ const menu = [
 function savePrefs(prefs, reload=true) {
   global.appConf = prefs
   fs.writeFileSync(PREFS_FILE, JSON.stringify(global.appConf), 'utf8')
-  
-  if (reload) appWin.reload()
 }
 
-function restore(reload=true) {
-  savePrefs(DEFAULTS, reload)
+function restore() {
+  savePrefs(DEFAULTS)
 }
 
 function restoreDialog() {
   const options  = {
+    type: 'warning',
     buttons: ['Cancelar','Aceptar'],
     message: '¿Restaurar los valores por defecto de la configuración de la aplicación?'
    }
-  dialog.showMessageBox(options, (resp) => { if (resp) restore()  }) // Ha pulsado aceptar
+  dialog.showMessageBox(options, (resp) => { if (resp) { restore(); reloadApp() } }) // Ha pulsado aceptar
 }
 
 /*=====  End of Funciones  ======*/
@@ -120,7 +118,22 @@ function initApp() {
   appWin.show()
   appWin.on('closed', () => { app.quit() })
   
-  //appWin.webContents.openDevTools()
+  appWin.webContents.openDevTools()
+
+  if (fs.existsSync(PREFS_FILE)) {
+    try {
+      global.appConf = JSON.parse(fs.readFileSync(PREFS_FILE, 'utf8'))
+    } catch (error) {
+      appWin.hide()
+      const options  = {
+        type: 'error',
+        buttons: ['Aceptar'],
+        message: 'El archivo de configuración está dañado. Se restaurarán los parámetros por defecto de la aplicación.'
+       }
+  
+      dialog.showMessageBox(appWin, options, () => { restore(); app.relaunch(); app.exit() }) // Ha pulsado aceptar
+    }
+  }
 }
 
 
@@ -133,13 +146,24 @@ function config() {
   
   configWin.on('closed', () => { configWin = null })
 
-  configWin.webContents.openDevTools()
+  //configWin.webContents.openDevTools()
 }
 
 /*=====  End of Ventanas  ======*/
 
+function about() {
+  const options  = {
+    type: 'info',
+    buttons: ['Aceptar'],
+    message: 'Farmavisión - Control Turnomatic para PC\nComunicacion Visual Canarias 2019\nContacto: 928 67 29 81'
+   }
+  dialog.showMessageBox(appWin, options)
+}
 
 
 
 app.on('ready', initApp)
-ipcMain.on('savePrefs', (e, arg) => { savePrefs(arg) })
+ipcMain.on('savePrefs', (e, arg) => { 
+  savePrefs(arg)
+  appWin.reload()
+})

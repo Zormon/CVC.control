@@ -8,67 +8,64 @@ body.main {
 
     background-color: darken($light-color, 10%);
 
-    main {
-        display: grid;
-        height: 100vh;
-        header {
-            display: flex;
-            flex-direction: row;
-            button {
-                height: 100%;
-                flex: 1;
-                border: 0;
-                border-bottom: 4px solid transparent;
-                background-color: darken($light-color, 10%);
-    
-    
-                &.current {
-                    font-weight: bold;
-                    border-bottom-color: $main-color;
-                }
-    
-                cursor: pointer;
+    display: grid;
+    height: 100vh;
+    header {
+        display: flex;
+        flex-direction: row;
+        button {
+            height: 100%;
+            flex: 1;
+            border: 0;
+            border-bottom: 4px solid transparent;
+            background-color: darken($light-color, 10%);
+
+
+            &.current {
+                font-weight: bold;
+                border-bottom-color: $main-color;
             }
-        }
-    
-        > #turno {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            overflow: hidden;
-            
-            #num {
-                font-size: 10em;
-                line-height: 1em;
-                margin-top: -.1em;
-            }
-    
-            #cola {
-                font-size: 2em;
-            }
-        }
-    
-        // Botones de accion
-        > button {
-            font-size: 2em;
-            border: none;
-            background-color: $light-color;
-            color: $dark-color;
-            margin: 2px 2px;
-            padding: 0;
-    
-            &:hover {
-                background-color: lighten($main-color, 40%);
-                cursor: pointer;
-            }
-    
-            &:active {
-                background-color: $main-color;
-                color: white;
-            }
+
+            cursor: pointer;
         }
     }
-    
+
+    > #turno {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        overflow: hidden;
+        
+        #num {
+            font-size: 10em;
+            line-height: 1em;
+            margin-top: -.1em;
+        }
+
+        #cola {
+            font-size: 2em;
+        }
+    }
+
+    // Botones de accion
+    > button {
+        font-size: 2em;
+        border: none;
+        background-color: $light-color;
+        color: $dark-color;
+        margin: 2px 2px;
+        padding: 0;
+
+        &:hover {
+            background-color: lighten($main-color, 40%);
+            cursor: pointer;
+        }
+
+        &:active {
+            background-color: $main-color;
+            color: white;
+        }
+    }
 }

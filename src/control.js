@@ -21,12 +21,26 @@ const colas = remote.getGlobal('appConf').colas
 
         wSocket.onmessage = (message) => {
             let turno = JSON.parse(message.data)
-            $('num').textContent = turno.numero.toString().padStart(2,'0')
-            $('cola').textContent = turno.nombre.toString().padStart(2,'0')
+            if (turno.numero != -1) { // Si se recibe -1 es un envio periodico de ping
+                $('num').textContent = turno.numero.toString().padStart(2,'0')
+                $('cola').textContent = turno.nombre.toString().padStart(2,'0')
+            }
+
+            document.body.classList.remove('error')
+            checkSocket()
         }
+    }
 
-        
+    function checkSocket() {
+        clearTimeout(document.wsTimeout)
 
+        document.wsTimeout = setTimeout( ()=> {
+            webSocket()
+            checkSocket()
+            $$('#errorModal > div > h1').textContent = 'Sin conexión con el turnomatic'
+            $$('#errorModal > div > p').textContent = `Intentando reconectar a ip ${remote.getGlobal('appConf').ip}`
+            document.body.classList.add('error')
+        }, 3000)
     }
 
 /*=====  End of Funciones  ======*/
@@ -45,7 +59,8 @@ const colas = remote.getGlobal('appConf').colas
 =            MAIN            =
 =============================================*/
 
-    webSocket()    
+    checkSocket()
+    webSocket()
 
     /*----------  Tabs  ----------*/
 
