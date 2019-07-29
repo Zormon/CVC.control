@@ -1,4 +1,7 @@
-* { outline: none; }
+* { 
+    outline: none;
+    user-select: none;
+ }
 
 body.main {
     padding: 0;
@@ -24,8 +27,6 @@ body.main {
                 font-weight: bold;
                 border-bottom-color: $main-color;
             }
-
-            cursor: pointer;
         }
     }
 
@@ -59,7 +60,6 @@ body.main {
 
         &:hover {
             background-color: lighten($main-color, 40%);
-            cursor: pointer;
         }
 
         &:active {
