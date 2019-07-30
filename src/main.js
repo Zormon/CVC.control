@@ -6,6 +6,7 @@ if (require('electron-squirrel-startup')) { app.quit() }
 var appWin
 var configWin = null
 
+
 /*=============================================
 =            Preferencias            =
 =============================================*/
@@ -163,6 +164,7 @@ var configWin = null
 
 
 app.on('ready', initApp)
+
 ipcMain.on('savePrefs', (e, arg) => { 
   savePrefs(arg)
   appWin.reload()

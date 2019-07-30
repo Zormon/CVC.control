@@ -8,6 +8,7 @@ var wSocket
 let cola = 'Mostrador 1'
 const colas = remote.getGlobal('appConf').colas
 
+
 /*=============================================
 =            Funciones            =
 =============================================*/
@@ -46,6 +47,8 @@ const colas = remote.getGlobal('appConf').colas
 /*=====  End of Funciones  ======*/
 
 
+
+
 /*=============================================
 =            Señales IPC            =
 =============================================*/
@@ -53,6 +56,8 @@ const colas = remote.getGlobal('appConf').colas
     ipcRenderer.on('turnomatic', (e, arg) => { cambiaTurno(arg, cola) })
 
 /*=====  End of Señales IPC  ======*/
+
+
 
 
 /*=============================================
@@ -88,4 +93,3 @@ const colas = remote.getGlobal('appConf').colas
     $('reset').onmousedown = () => { cambiaTurno('reset', cola) }
 
 /*=====  End of MAIN  ======*/
-
