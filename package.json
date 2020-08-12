@@ -1,59 +1,25 @@
 {
-  "name": "controlturnomatic",
-  "productName": "controlturnomatic",
-  "version": "1.0.0",
-  "description": "Control de turnos para turnomatic Farmavisión para PC",
+  "name": "farmaturnomaticcontrol",
+  "productName": "farmaturnomaticcontrol",
+  "version": "1.1.0",
+  "description": "Aplicación para PC para controlar farmaTurnomatic",
   "main": "src/main.js",
   "scripts": {
-    "start": "node-sass sass/farmaControlTurnos.scss src/farmaControlTurnos.css --output-style compressed && electron-forge start",
+    "start": "electron-forge start",
     "package": "electron-forge package",
-    "make": "electron-forge make",
-    "publish": "electron-forge publish",
-    "lint": "echo \"No linting configured\""
+    "package-linux": "electron-forge package --platform=linux --arch=x64"
   },
-  "keywords": [],
-  "author": {
-    "name": "creativo",
-    "email": "creativo@comunicacionvisualcanarias.com"
-  },
+  "author": "Comunicacion Visual Canarias",
   "license": "MIT",
   "config": {
     "forge": {
-      "packagerConfig": {},
-      "makers": [
-        {
-          "name": "@electron-forge/maker-squirrel",
-          "config": {
-            "name": "controlturnomatic",
-            "iconUrl": "res/icon.ico"
-          }
-        },
-        {
-          "name": "@electron-forge/maker-zip",
-          "platforms": [
-            "darwin"
-          ]
-        },
-        {
-          "name": "@electron-forge/maker-deb",
-          "config": {}
-        },
-        {
-          "name": "@electron-forge/maker-rpm",
-          "config": {}
-        }
-      ]
+      "packagerConfig": {
+		    "ignore": ["sass", ".vscode", ".gitignore", "yarn.lock"]
+	    }
     }
   },
-  "dependencies": {
-    "electron-squirrel-startup": "^1.0.0"
-  },
   "devDependencies": {
-    "@electron-forge/cli": "6.0.0-beta.42",
-    "@electron-forge/maker-deb": "6.0.0-beta.42",
-    "@electron-forge/maker-rpm": "6.0.0-beta.42",
-    "@electron-forge/maker-squirrel": "6.0.0-beta.42",
-    "@electron-forge/maker-zip": "6.0.0-beta.42",
-    "electron": "5.0.8"
+    "@electron-forge/cli": "^6.0.0-beta.51",
+    "electron": "^9.0.3"
   }
 }

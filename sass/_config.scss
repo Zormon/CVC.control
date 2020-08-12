@@ -6,10 +6,14 @@ body.config {
     flex-direction: column;
     height: 100vh;
     
-    form#config {
+    form {
         width: 100%;
         padding: .5em 1em;
         box-sizing: border-box;
+
+        fieldset {
+            margin-bottom: 1em;
+        }
 
         div { 
             margin: 0 0 .8em; 
@@ -78,15 +82,5 @@ body.config {
     input:disabled + label { 
         opacity: .5;
      }
-
-    
-    footer {
-        margin: auto 0 0;
-        padding: 0;
-        background: url(img/FarmavisionNegro.svg) no-repeat center center black;
-        background-size: 70%;
-        height: 20vh;
-        border-top: 3px solid $main-color;
-    }
 }
 

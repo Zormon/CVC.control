@@ -7,7 +7,7 @@
         {
             "label": "Sass Compile",
             "type": "shell",
-            "command": "node-sass sass/farmaControlTurnos.scss src/farmaControlTurnos.css --output-style compressed",
+            "command": "node-sass sass/app.scss src/res/app.css --output-style compressed",
             "group": "build",
             "problemMatcher": []
         }

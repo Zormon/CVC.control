@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Configuracion - Control de Turnos - Farmavision</title>
+    <script src="../_config/config.js" defer></script>
+    <link rel="stylesheet" href="../res/app.css">
+  </head>
+  <body class="config">
+      <form id="config">
+        <div>
+          <label for="mostrador">Nombre del mostrador</label>
+          <input type="text" id="mostrador" title="Solo direcciones IPv4" placeholder="Mostrador 1">
+        </div>
+
+        <div>
+          <label for="shortcutKey">Tecla de atajos de teclado</label>
+          <select id="shortcutKey">
+            <option value="no">Sin atajos</option>
+            <option value="CmdOrCtrl">Ctrl</option>
+            <option value="Shift">Shift</option>
+            <option value="CmdOrCtrl+Alt">Ctrl + Alt</option>
+            <option value="CmdOrCtrl+Shift">Ctlr + Shift</option>
+          </select>
+        </div>
+
+        <div>
+          <input type="checkbox" id="focusOnShortcut">
+          <label for="focusOnShortcut">Mostrar ventana al enviar comando</label>
+        </div>
+
+        <div>
+          <input type="checkbox" id="notifications">
+          <label for="notifications">Mostrar notificaciones</label>
+        </div>
+
+        <fieldset>
+          <legend>Servidor</legend>
+          <div>
+            <label for="ip">Direccion IP del turnomatic</label>
+            <input type="text" id="ip" pattern="((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$" title="Solo direcciones IPv4" placeholder="127.0.0.1" required>
+          </div>
+  
+          <div>
+            <label for="port">Puerto del servidor turnomatic</label>
+            <input type="text" id="port" title="Requerido" placeholder="3000" required>
+          </div>
+        </fieldset>
+
+        <button id="save">Aplicar</button>
+      </form>
+  </body>
+</html>
