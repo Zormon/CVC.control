@@ -19,13 +19,21 @@ body.main {
             height: 100%;
             flex: 1;
             border: 0;
-            border-bottom: 4px solid transparent;
-            background-color: darken($light-color, 10%);
+            font-size: 1em;
+            color: white;
 
+            &:not(.current) {
+                cursor: pointer;
+                filter: contrast(0.7);
+                &:hover {
+                    filter: brightness(1.2) !important;
+                }
+            }
 
             &.current {
                 font-weight: bold;
-                border-bottom-color: $main-color;
+                box-shadow: 0 0 10px 0 rgba(0,0,0,.7);
+                z-index: 2;
             }
         }
     }

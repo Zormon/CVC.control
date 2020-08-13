@@ -44,15 +44,20 @@ class wSocket {
     }
 
     changeCola( id ) {
-        this.currentCola = id
+        if (!isNaN(id) && typeof this.colas[id] !== 'undefined')     { this.currentCola = id }
+        else                                                         { this.currentCola = 0 }
+
         $$$('#tabs button').forEach( el => { el.className = '' } )
-        $$(`#tabs button[data-id="${id}"]`).className = 'current'
+        $$(`#tabs button[data-id="${this.currentCola}"]`).className = 'current'
 
         $('num').textContent = this.turnos[this.currentCola].num
         $('texto').textContent = this.turnos[this.currentCola].texto
+
+        localStorage.setItem('currentCola', this.currentCola)
     }
 
     spread(colas) {
+        var _this = this
         // Crea los botones de las colas
         let tabs = $('tabs')
         while (tabs.firstChild) { tabs.removeChild(tabs.firstChild) }
@@ -60,12 +65,13 @@ class wSocket {
             let btn = document.createElement('button')
             btn.dataset.id = i
             btn.textContent = colas[i].nombre
-            if (i == 0) { btn.className = 'current' }
-
-            var _this = this
-            btn.onclick = (e) => { _this.changeCola( e.currentTarget.dataset.id ) }
+            btn.style.backgroundColor = colas[i].color
+            
+            btn.onclick = (e) => { _this.changeCola( parseInt(e.currentTarget.dataset.id) ) }
             $('tabs').appendChild(btn)
         }
+
+        _this.changeCola( localStorage.getItem('currentCola') )
     }
 
     update(cola) {
@@ -98,14 +104,14 @@ class wSocket {
             $$('#errorModal > div > p').textContent = `Intentando reconectar a ${remote.getGlobal('appConf').ip}`
             document.body.classList.add('error')
         }, 5000)
-      }
+    }
 
-      send( data ) {
-        this.ws.send( JSON.stringify( data ) )
-      }
+    send( data ) {
+    this.ws.send( JSON.stringify( data ) )
+    }
 
-      turno( accion, texto='' ) {
-          var _this = this
-          _this.send( {accion: accion, cola: this.currentCola, texto: texto} )
-      }
+    turno( accion, texto='' ) {
+        var _this = this
+        _this.send( {accion: accion, cola: this.currentCola, texto: texto} )
+    }
 }
