@@ -107,7 +107,7 @@ app.setAppUserModelId(process.execPath) // Para notificaciones en Windows
 
   function registerGlobalShortcuts() {
     globalShortcut.unregisterAll()
-    if (appConf.shortcut != 'no') {
+    if (appConf.shortcutKey != 'no') {
       globalShortcut.register(`${appConf.shortcutKey}+1`, () => { turno('sube') })
       globalShortcut.register(`${appConf.shortcutKey}+2`, () => { turno('baja') })
       globalShortcut.register(`${appConf.shortcutKey}+3`, () => { turno('reset') })

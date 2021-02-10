@@ -1,13 +1,14 @@
 {
   "name": "farmaturnomaticcontrol",
   "productName": "farmaturnomaticcontrol",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Aplicación para PC para controlar farmaTurnomatic",
   "main": "src/main.js",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
-    "package-linux": "electron-forge package --platform=linux --arch=x64"
+    "package-linux": "electron-forge package --platform=linux --arch=x64",
+	"package-win32": "electron-forge package --platform=win32 --arch=ia32"
   },
   "author": "Comunicacion Visual Canarias",
   "license": "MIT",
