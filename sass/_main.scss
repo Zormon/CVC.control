@@ -19,21 +19,38 @@ body.main {
             height: 100%;
             flex: 1;
             border: 0;
-            font-size: 1em;
-            color: white;
+            font-size: 1.1em;
+            color: lightgray;
+            position: relative;
+            overflow: hidden;
+            border-top: 3px solid #ffffff4d;
+            z-index: 2;
+            
+
+            i[class^="icon-"] {
+                position: absolute;
+                top: 50%;
+                left: 10%;
+                font-size: 54px;
+                line-height: 0;
+                opacity: .3;
+            }
 
             &:not(.current) {
                 cursor: pointer;
-                filter: contrast(0.7);
+                filter: saturate(40%);
                 &:hover {
                     filter: brightness(1.2) !important;
+                    box-shadow: 0px 7px 16px -8px #0008;
                 }
             }
 
             &.current {
+                color: white;
                 font-weight: bold;
-                box-shadow: 0 0 10px 0 rgba(0,0,0,.7);
-                z-index: 2;
+                border-top-color: #fffa;
+                box-shadow: 0px 7px 18px -6px #000e;
+                z-index: 1;
             }
         }
     }
@@ -53,8 +70,10 @@ body.main {
         }
 
         #texto {
-            font-size: 2em;
+            font-size: 1.8em;
         }
+
+        #ticket { font-size: 1em; color: #353535; }
     }
 
     // Botones de accion

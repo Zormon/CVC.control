@@ -1,35 +1,29 @@
-function $(id)      { return document.getElementById(id)    }
-
-const remote = require('electron').remote
-const { ipcRenderer } = require('electron')
-
-var prefs = remote.getGlobal('appConf')
+import {$} from '../exports.web.js'
+var CONF = window.ipc.get.appConf()
 
 function savePreferences() {
-    prefs.mostrador = $('mostrador').value
-    prefs.ip = $('ip').value
-    prefs.port = $('port').value
-    prefs.shortcutKey = $('shortcutKey').value
-    prefs.notifications = $('notifications').checked
-    prefs.focusOnShortcut = $('focusOnShortcut').checked
-    ipcRenderer.send('savePrefs', prefs )
+    CONF.mostrador = $('mostrador').value
+    CONF.server.ip = $('ip').value
+    CONF.server.port = $('port').value
+    CONF.shortcutKey = $('shortcutKey').value
+    CONF.notifications = $('notifications').checked
+    CONF.focusOnShortcut = $('focusOnShortcut').checked
+
+    window.ipc.save.appConf( CONF )
 }
 
 $('save').onclick = (e)=> {
     e.preventDefault()
-    if ( $('config').checkValidity() ) {
-        savePreferences()
-        remote.getCurrentWindow().close()
-    } else { 
-        $('config').reportValidity()
-    }
+    if ( $('config').checkValidity() )  { savePreferences() }
+    else                                { $('config').reportValidity() }
 }
 
-$('mostrador').value = prefs.mostrador
-$('ip').value = prefs.ip
-$('port').value = prefs.port
-$('shortcutKey').value = prefs.shortcutKey
-$('focusOnShortcut').checked = prefs.focusOnShortcut
-$('notifications').checked = prefs.notifications
+// Initialization
+$('mostrador').value = CONF.mostrador
+$('ip').value = CONF.server.ip
+$('port').value = CONF.server.port
+$('shortcutKey').value = CONF.shortcutKey
+$('focusOnShortcut').checked = CONF.focusOnShortcut
+$('notifications').checked = CONF.notifications
 
 

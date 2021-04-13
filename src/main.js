@@ -1,8 +1,11 @@
-const { app, BrowserWindow, globalShortcut, Menu, ipcMain, dialog } = require('electron')
-
+const appName = 'Control Turnos'
+const { app, BrowserWindow, globalShortcut, Menu, ipcMain, dialog, Notification } = require('electron')
 const fs = require("fs")
-var appWin
-var configWin; var configServerWin;
+const path = require('path')
+const logger = require('./log.js')
+const isLinux = process.platform === "linux"
+const restartCommandShell =  `~/system/scripts/appsCvc restart ${appName} &`
+var appWin, configWin, configServerWin;
 
 app.setAppUserModelId(process.execPath) // Para notificaciones en Windows
 
@@ -13,17 +16,19 @@ app.setAppUserModelId(process.execPath) // Para notificaciones en Windows
   const CONFIG_FILE = `${app.getPath('userData')}/appConf.json`
 
   // Defaults
-  const DEFAULTS = 
+  const DEFAULT_CONFIG = 
   { 
     mostrador:'Mostrador 1',
-    ip:'127.0.0.1',
-    port:'3000', 
+    server: {
+      ip:'127.0.0.1',
+      port:'3000', 
+    },
     focusOnShortcut:false,
     notifications:false,
     shortcutKey: 'no'
   }
-  global.appConf = DEFAULTS
-
+  
+  if ( !(global.APPCONF = loadConfigFile(CONFIG_FILE)) )      { global.APPCONF = DEFAULT_CONFIG }
 
 /*=====  End of Preferencias  ======*/
 
@@ -78,22 +83,37 @@ app.setAppUserModelId(process.execPath) // Para notificaciones en Windows
 =============================================*/
 
   function turno(accion) {
-    appWin.webContents.send('turnomatic', accion)
-    if (appConf.focusOnShortcut) { appWin.focus() }
+    appWin.webContents.send('turno', accion)
+    if (APPCONF.focusOnShortcut) { appWin.focus() }
   }
 
   function restart() {
-    app.relaunch()
-    app.exit()
+    if (isLinux) {
+      let exec = require('child_process').exec
+      exec(restartCommandShell, (err, stdout)=> {})
+    } else {
+      app.relaunch()
+      app.quit()
+    }
   }
 
-  function savePrefs(prefs) {
-    global.appConf = prefs
-    fs.writeFileSync(CONFIG_FILE, JSON.stringify(global.appConf), 'utf8')
+  function saveConfFile(prefs, file) {
+    fs.writeFileSync(file, JSON.stringify(prefs), 'utf8')
+  }
+
+  function loadConfigFile(file) {
+    if (fs.existsSync(file)) {
+      try {
+        let data = JSON.parse(fs.readFileSync(file, 'utf8'))
+        return data
+      } catch (error) { return false }
+    } else { return false}
   }
 
   function restore() {
-    savePrefs(DEFAULTS)
+    saveConfFile(DEFAULT_CONFIG, CONFIG_FILE)
+    saveConfFile(DEFAULT_UI, CONFIGUI_FILE)
+    restart() 
   }
 
   function restoreDialog() {
@@ -107,10 +127,10 @@ app.setAppUserModelId(process.execPath) // Para notificaciones en Windows
 
   function registerGlobalShortcuts() {
     globalShortcut.unregisterAll()
-    if (appConf.shortcutKey != 'no') {
-      globalShortcut.register(`${appConf.shortcutKey}+1`, () => { turno('sube') })
-      globalShortcut.register(`${appConf.shortcutKey}+2`, () => { turno('baja') })
-      globalShortcut.register(`${appConf.shortcutKey}+3`, () => { turno('reset') })
+    if (APPCONF.shortcutKey != 'no') {
+      globalShortcut.register(`${APPCONF.shortcutKey}+1`, () => { turno('sube') })
+      globalShortcut.register(`${APPCONF.shortcutKey}+2`, () => { turno('baja') })
+      globalShortcut.register(`${APPCONF.shortcutKey}+3`, () => { turno('reset') })
     }
   }
 
@@ -124,38 +144,44 @@ app.setAppUserModelId(process.execPath) // Para notificaciones en Windows
 =============================================*/
 
   function initApp() {
-    if (fs.existsSync(CONFIG_FILE)) {
-      try {
-        global.appConf = JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf8'))
-      } catch (error) { restore() }
+    let winOptions = {
+      width: 600, height: 320, resizable:false, show:false, 
+      icon: `${app.getAppPath()}/icon64.png`,
+      webPreferences: { contextIsolation: true, preload: path.join(__dirname, "preload.js") }
     }
-    appWin = new BrowserWindow({width: 600,height: 300, show:false, icon: `${app.getAppPath()}/icon64.png`, webPreferences: { nodeIntegration: true}})
-    
-    appWin.loadURL(`file://${__dirname}/_index/index.html`)
-    appWin.setMenu( Menu.buildFromTemplate(menu) )
-    appWin.resizable =  false
+    appWin = new BrowserWindow(winOptions)
+    appWin.loadFile(`${__dirname}/_index/index.html`)
+    appWin.setTitle(appName)
+    Menu.setApplicationMenu( Menu.buildFromTemplate(menu) )
     
     registerGlobalShortcuts()
     
     appWin.show()
-    appWin.on('closed', () => { app.quit() })
-    //appWin.webContents.openDevTools()
+    appWin.on('closed', () => { logs.log('MAIN','QUIT',''); app.quit() })
+    appWin.webContents.openDevTools()
   }
 
   function config() {
-    configWin = new BrowserWindow({width: 400,height: 600, show:false, webPreferences: { nodeIntegration: true, parent: appWin }})
-    configWin.loadURL(`file://${__dirname}/_config/config.html`)
+    const winOptions = {
+      width: 400, height: 600, resizable:false, show:false, parent: appWin, modal:true,
+      webPreferences: { preload: path.join(__dirname, "preload.js") }
+    }
+    configWin = new BrowserWindow(winOptions)
+    configWin.loadFile(`${__dirname}/_config/config.html`)
     configWin.setMenu( null )
-    configWin.resizable = false
-
     configWin.show()
+    
     configWin.on('closed', () => { configWin = null })
     //configWin.webContents.openDevTools()
   }
 
   function configServer() {
-    configWin = new BrowserWindow({width: 400, height: 600, show:false, webPreferences: { nodeIntegration: true, parent: appWin }})
-    configWin.loadURL(`file://${__dirname}/_configServer/configServer.html`)
+    const winOptions = {
+      width: 400, height: 600, resizable:false, show:false, parent: appWin, modal:true,
+      webPreferences: { preload: path.join(__dirname, "preload.js") }
+    }
+    configWin = new BrowserWindow(winOptions)
+    configWin.loadFile(`${__dirname}/_configServer/configServer.html`)
     configWin.setMenu( null )
     configWin.resizable = false
     configWin.show()
@@ -169,7 +195,7 @@ app.setAppUserModelId(process.execPath) // Para notificaciones en Windows
       type: 'info',
       buttons: ['Aceptar'],
       title: 'Información',
-      message: 'Farmavisión - Control Turnomatic para PC\nComunicacion Visual Canarias 2020\nContacto: 928 67 29 81'
+      message: 'Farmavisión - Control Turnomatic para PC\nComunicacion Visual Canarias 2021\nContacto: 928 67 29 81'
      }
     dialog.showMessageBox(appWin, options)
   }
@@ -180,8 +206,32 @@ app.setAppUserModelId(process.execPath) // Para notificaciones en Windows
 
 app.on('ready', initApp)
 
-ipcMain.on('savePrefs', (e, arg) => { 
-  savePrefs(arg)
-  appWin.reload()
-  registerGlobalShortcuts()
+ipcMain.on('getGlobal', (e, type) => {
+  switch(type) {
+    case 'appConf':
+      e.returnValue = global.APPCONF
+    break
+    case 'interface':
+      e.returnValue = global.UI
+    break
+  }
 })
+
+ipcMain.on('saveAppConf', (e, arg) => { 
+  global.APPCONF = arg
+  saveConfFile(arg, CONFIG_FILE)
+  logs.log('MAIN', 'SAVE_PREFS', JSON.stringify(arg))
+  restart()
+})
+
+ipcMain.on('notification', (e, arg) => { 
+  if (global.APPCONF.notifications && !appWin.isFocused() && global.APPCONF.mostrador != arg) {
+    const notification = { title: arg.header, body: arg.body}
+    new Notification(notification).show()
+  }
+})
+
+// Logs
+var logs = new logger(`${app.getPath('userData')}/logs/`, appName)
+ipcMain.on('log', (e, arg) =>       { logs.log(arg.origin, arg.event, arg.message) })
+ipcMain.on('logError', (e, arg) =>  { logs.error(arg.origin, arg.error, arg.message) })

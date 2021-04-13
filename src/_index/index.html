@@ -3,20 +3,23 @@
   <head>
     <meta charset="utf-8">
     <title>Control de Turnos - Farmavision</title>
-    <script src="../_index/wSocket.class.js" defer></script>
-    <script src="../_index/index.js" defer></script>
-    <link rel="stylesheet" href="../res/app.css">
+    <link rel="stylesheet" href="../res/control.css">
+    <script type="module" src="index.js"></script>
   </head>
   <body class="main">
       <header id="tabs"></header>
       <div id="turno">
         <div id="num"></div>
         <div id="texto"></div>
+        <div id="ticket"></div>
       </div>
       <button id="plus">Subir</button>
       <button id="minus">Bajar</button>
       <button id="reset">Reset</button>
 
-    <div id="errorModal"><div><h1></h1><p></p></div></div>
+      <template id="msgBox">
+        <h1 data-tpl="header" class="header"></h1>
+        <p data-tpl="texto" class="texto"></p>
+      </template>
   </body>
 </html>

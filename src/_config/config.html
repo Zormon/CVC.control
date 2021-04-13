@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
     <title>Configuracion - Control de Turnos - Farmavision</title>
-    <script src="../_config/config.js" defer></script>
-    <link rel="stylesheet" href="../res/app.css">
+    <script type="module" src="config.js"></script>
+    <link rel="stylesheet" href="../res/config.css">
   </head>
   <body class="config">
       <form id="config">
@@ -17,10 +17,11 @@
           <label for="shortcutKey">Tecla de atajos de teclado</label>
           <select id="shortcutKey">
             <option value="no">Sin atajos</option>
-            <option value="CmdOrCtrl">Ctrl</option>
+            <option value="Ctrl">Ctrl</option>
             <option value="Shift">Shift</option>
-            <option value="CmdOrCtrl+Alt">Ctrl + Alt</option>
-            <option value="CmdOrCtrl+Shift">Ctlr + Shift</option>
+            <option value="Ctrl+Alt">Ctrl + Alt</option>
+            <option value="Ctrl+Shift">Ctlr + Shift</option>
+            <option value="Alt+Shift">Alt + Shift</option>
           </select>
         </div>
 

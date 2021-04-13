@@ -1,15 +1,15 @@
-function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)) }
-function isFunction(f) {return f && {}.toString.call(f)==='[object Function]'}
+import {$, $$, $$$, iconNames, modalBox} from '../exports.web.js'
 
 class wSocket {
-    constructor(ip, port, front=false, notify=false) {
-        this.ip = ip
-        this.port = port
-        this.front = front
+    constructor(server, notification, logger) {
+        this.ip = server.ip
+        this.port = server.port
+        this.notification = notification
+        this.logError = logger.error
         this.currentCola = 0
         this.colas = []
         this.turnos = []
-        this.notifications = notify
+        this.tickets = []
     }
 
     init() {
@@ -20,19 +20,24 @@ class wSocket {
         this.ws.onmessage = (message) => {
             let msg = JSON.parse(message.data)
             switch (msg.accion) {
-                case 'spread':
-                    this.colas = msg.colas
-                    this.turnos = msg.turnos
-                    _this.spread(this.colas, this.turnos)
-                    _this.changeCola( this.currentCola )
-                break
                 case 'update':
                     this.turnos[msg.cola].num = msg.numero
                     this.turnos[msg.cola].texto = msg.texto
                     _this.update(msg.cola)
                 break
-                default: // Si se recibe cualquier otro mensaje es un ping del server
-                    document.body.classList.remove('error')
+                case 'updateTicket':
+                    this.tickets[msg.cola].num = msg.numero
+                    _this.updateTicket(msg.cola)
+                break
+                case 'spread':
+                    this.colas = msg.colas
+                    this.turnos = msg.turnos
+                    this.tickets = msg.tickets
+                    _this.spread(this.colas)
+                    _this.changeCola( this.currentCola )
+                break
+                default:
+                    modalBox('socketError', false)
                     _this.check()
                 break
             }
@@ -52,6 +57,7 @@ class wSocket {
 
         $('num').textContent = this.turnos[this.currentCola].num
         $('texto').textContent = this.turnos[this.currentCola].texto
+        $('ticket').textContent = 'Último ticket: ' + this.tickets[this.currentCola].num
 
         localStorage.setItem('currentCola', this.currentCola)
     }
@@ -62,13 +68,15 @@ class wSocket {
         let tabs = $('tabs')
         while (tabs.firstChild) { tabs.removeChild(tabs.firstChild) }
         for (let i=0; i < colas.length; i++) {
-            let btn = document.createElement('button')
+            let btn, icon
+            btn = document.createElement('button')
             btn.dataset.id = i
             btn.textContent = colas[i].nombre
             btn.style.backgroundColor = colas[i].color
-            
             btn.onclick = (e) => { _this.changeCola( parseInt(e.currentTarget.dataset.id) ) }
-            $('tabs').appendChild(btn)
+
+            icon = document.createElement('i'); icon.className = `icon-${iconNames[colas[i].icon]}`
+            btn.appendChild(icon); tabs.appendChild(btn)
         }
 
         _this.changeCola( localStorage.getItem('currentCola') )
@@ -79,17 +87,16 @@ class wSocket {
             $('num').textContent = this.turnos[cola].num.toString()
             $('texto').textContent = this.turnos[cola].texto.toString()
 
-            const [bWin] = remote.BrowserWindow.getAllWindows();
-
-            if (this.notifications && !bWin.isFocused()) {
-                let notif = new Notification(`Cola ${this.colas[cola].nombre} actualizado`, {
-                    body: `Número: ${this.turnos[cola].num}, Mostrador: ${this.turnos[cola].texto}`
-                })
-
-                notif.onclick = () => { console.log('Notification clicked') }
-            }
+            const head = `Cola ${this.colas[cola].nombre} actualizado`
+            const body = `Número: ${this.turnos[cola].num}, Mostrador: ${this.turnos[cola].texto}`
+            this.notification.show(this.turnos[cola].texto,head, body)
         }
-        
+    }
+
+    updateTicket(cola) {
+        if (cola == this.currentCola) { // Solo si estamos en la cola actual
+            $('ticket').textContent = 'Último ticket: ' + this.tickets[cola].num.toString()
+        }
     }
 
     check() {
@@ -100,14 +107,15 @@ class wSocket {
             _this.close()
             _this.init()
             _this.check()
-            $$('#errorModal > div > h1').textContent = 'Sin conexión con el turnomatic'
-            $$('#errorModal > div > p').textContent = `Intentando reconectar a ${remote.getGlobal('appConf').ip}`
-            document.body.classList.add('error')
+
+            // Error Modal
+            modalBox('socketError', 'msgBox', [['header','ERROR DE CONEXIÓN'],['texto', `Conectando a ${this.ip}`]], 'error' )
+            this.logError({origin: 'TURNOMATIC', error: 'OFFLINE', message: `Conectando a ${this.ip}`})
         }, 5000)
     }
 
     send( data ) {
-    this.ws.send( JSON.stringify( data ) )
+        this.ws.send( JSON.stringify( data ) )
     }
 
     turno( accion, texto='' ) {
@@ -115,3 +123,5 @@ class wSocket {
         _this.send( {accion: accion, cola: this.currentCola, texto: texto} )
     }
 }
+
+export default wSocket

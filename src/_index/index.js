@@ -1,31 +1,18 @@
-const { ipcRenderer, remote } = require('electron')
-function $(id)      { return document.getElementById(id)    }
-function $$(id)     { return document.querySelector(id)     }
-function $$$(id)    { return document.querySelectorAll(id)  }
+import wSocket from './wSocket.class.js'
+import {$} from '../exports.web.js'
 
-const conf = remote.getGlobal('appConf')
+const conf = window.ipc.get.appConf()
 
+const notif = conf.notifications? window.ipc.notification : false
 
-/*=============================================
-=            Señales IPC            =
-=============================================*/
+var ws = new wSocket(conf.server, notif, window.ipc.logger)
+ws.init()
 
-    ipcRenderer.on('turnomatic', (e, arg) => { ws.turno( arg, conf.mostrador ) })
+window.ipc.on.turno( (data)=> {
+    ws.turno( data, conf.mostrador )
+} )
 
-/*=====  End of Señales IPC  ======*/
-
-
-/*=============================================
-=            MAIN            =
-=============================================*/
-
-    var ws = new wSocket(conf.ip, conf.port, true, conf.notifications)
-    ws.init()
-
-    /*----------  Botones  ----------*/
-
-    $('plus').onmousedown = () =>   { ws.turno( 'sube', conf.mostrador ) }
-    $('minus').onmousedown = () =>  { ws.turno( 'baja', conf.mostrador ) }
-    $('reset').onmousedown = () =>  { ws.turno( 'reset', conf.mostrador ) }
-
-/*=====  End of MAIN  ======*/
+/*----------  Botones  ----------*/
+$('plus').onmousedown = () =>   { ws.turno( 'sube', conf.mostrador ) }
+$('minus').onmousedown = () =>  { ws.turno( 'baja', conf.mostrador ) }
+$('reset').onmousedown = () =>  { ws.turno( 'reset', conf.mostrador ) }

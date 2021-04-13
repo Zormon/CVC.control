@@ -7,7 +7,7 @@
         {
             "label": "Sass Compile",
             "type": "shell",
-            "command": "node-sass sass/app.scss src/res/app.css --output-style compressed",
+            "command": "node-sass sass/control.scss src/res/control.css --output-style compressed; node-sass sass/config.scss src/res/config.css --output-style compressed",
             "group": "build",
             "problemMatcher": []
         }

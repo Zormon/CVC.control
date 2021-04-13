@@ -1,0 +1,18 @@
+
+/*----------  Colores  ----------*/
+
+$main-color: #7eb031;
+$secondary-color: #ec1b24;
+$dark-color: black;
+$light-color: white;
+
+
+@keyframes slide-down {
+    from    { transform: translateY(-170%); }
+    to      { transform: translateY(0%); }
+}
+
+@keyframes slide-right {
+    from    { transform: translateX(-120%); }
+    to      { transform: translateX(0%); }
+}
