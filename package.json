@@ -1,26 +1,15 @@
 {
   "name": "controlturnos",
-  "productName": "controlturnos",
-  "version": "2.0.0",
+   "productName": "controlturnos",
+  "version": "2.5.0",
   "description": "Aplicación para PC para controlar turnomatic digital",
   "main": "src/main.js",
-  "scripts": {
-    "start": "electron-forge start",
-    "package": "electron-forge package",
-    "package-linux": "electron-forge package --platform=linux --arch=x64",
-	"package-win32": "electron-forge package --platform=win32 --arch=ia32"
-  },
   "author": "Comunicacion Visual Canarias",
   "license": "MIT",
-  "config": {
-    "forge": {
-      "packagerConfig": {
-		    "ignore": ["sass", ".vscode", ".gitignore", "yarn.lock"]
-	    }
-    }
-  },
   "devDependencies": {
-    "@electron-forge/cli": "6.0.0-beta.54",
-    "electron": "^12.0.2"
+    "electron": "^15.1.2"
+  },
+  "scripts": {
+    "start": "electron ."
   }
 }

@@ -14,6 +14,12 @@ const iconNames = [
     'congelados'    // 10
 ]
 
+// Teclas permitidas para atajos
+const allowedKeys = [
+  'Q','W','E','R','T','Y','U','I','O','P','A','S','D','F','G','H','J','K','L','Z','X','C','V','B','N','M','0','1','2','3','4','5','6','7','8','9','.',',','-','<',
+  'INSERT', 'DELETE', 'HOME', 'END', 'PAGEUP', 'PAGEDOWN', 'ENTER', 'UP', 'DOWN', 'LEFT', 'RIGHT'
+]
+
 // Alias de selectores generales
 var getById = document.getElementById.bind(document)
 var querySel = document.querySelector.bind(document)
@@ -81,6 +87,7 @@ function modalBox(id, template, tplvars=[], type='', accion=false, buttons=['Can
 
 export { 
     iconNames,
+    allowedKeys,
     sleep,
     modalBox,
     isFunction,

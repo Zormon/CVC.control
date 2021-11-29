@@ -5,7 +5,7 @@ const conf = window.ipc.get.appConf()
 
 const notif = conf.notifications? window.ipc.notification : false
 
-var ws = new wSocket(conf.server, notif, window.ipc.logger)
+var ws = new wSocket(conf, notif, window.ipc.logger)
 ws.init()
 
 window.ipc.on.turno( (data)=> {

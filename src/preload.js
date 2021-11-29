@@ -5,6 +5,7 @@ contextBridge.exposeInMainWorld (
         get: {
             appConf: () => ipcRenderer.sendSync('getGlobal', 'appConf'),
             interface: () => ipcRenderer.sendSync('getGlobal', 'interface'),
+            appInfo: () => ipcRenderer.sendSync('getAppInfo'),
         },
         save: {
             appConf: (data) => ipcRenderer.send('saveAppConf', data ),

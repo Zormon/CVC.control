@@ -13,7 +13,7 @@ app.setAppUserModelId(process.execPath) // Para notificaciones en Windows
 =            Preferencias            =
 =============================================*/
 
-  const CONFIG_FILE = `${app.getPath('userData')}/appConf.json`
+  const CONFIG_FILE = `${app.getPath('userData')}/_custom/appConf.json`
 
   // Defaults
   const DEFAULT_CONFIG = 
@@ -23,9 +23,15 @@ app.setAppUserModelId(process.execPath) // Para notificaciones en Windows
       ip:'127.0.0.1',
       port:'3000', 
     },
+    shortcuts: {
+      key: 'no',
+      up: '1',
+      down: '2',
+      reset: '3'
+    },
     focusOnShortcut:false,
+    showTicket:true,
     notifications:false,
-    shortcutKey: 'no'
   }
   
   if ( !(global.APPCONF = loadConfigFile(CONFIG_FILE)) )      { global.APPCONF = DEFAULT_CONFIG }
@@ -127,10 +133,10 @@ app.setAppUserModelId(process.execPath) // Para notificaciones en Windows
 
   function registerGlobalShortcuts() {
     globalShortcut.unregisterAll()
-    if (APPCONF.shortcutKey != 'no') {
-      globalShortcut.register(`${APPCONF.shortcutKey}+1`, () => { turno('sube') })
-      globalShortcut.register(`${APPCONF.shortcutKey}+2`, () => { turno('baja') })
-      globalShortcut.register(`${APPCONF.shortcutKey}+3`, () => { turno('reset') })
+    if (APPCONF.shortcuts.key != 'no') {
+      globalShortcut.register(`${APPCONF.shortcuts.key}+${APPCONF.shortcuts.up}`, () => { turno('sube') })
+      globalShortcut.register(`${APPCONF.shortcuts.key}+${APPCONF.shortcuts.down}`, () => { turno('baja') })
+      globalShortcut.register(`${APPCONF.shortcuts.key}+${APPCONF.shortcuts.reset}`, () => { turno('reset') })
     }
   }
 
@@ -147,7 +153,7 @@ app.setAppUserModelId(process.execPath) // Para notificaciones en Windows
     let winOptions = {
       width: 600, height: 320, resizable:false, show:false, 
       icon: `${app.getAppPath()}/icon64.png`,
-      webPreferences: { contextIsolation: true, preload: path.join(__dirname, "preload.js") }
+      webPreferences: { spellcheck:false, contextIsolation: true, preload: path.join(__dirname, "preload.js") }
     }
     appWin = new BrowserWindow(winOptions)
     appWin.loadFile(`${__dirname}/_index/index.html`)
@@ -158,13 +164,13 @@ app.setAppUserModelId(process.execPath) // Para notificaciones en Windows
     
     appWin.show()
     appWin.on('closed', () => { logs.log('MAIN','QUIT',''); app.quit() })
-    appWin.webContents.openDevTools()
+    //appWin.webContents.openDevTools()
   }
 
   function config() {
     const winOptions = {
       width: 400, height: 600, resizable:false, show:false, parent: appWin, modal:true,
-      webPreferences: { preload: path.join(__dirname, "preload.js") }
+      webPreferences: { spellcheck:false, preload: path.join(__dirname, "preload.js") }
     }
     configWin = new BrowserWindow(winOptions)
     configWin.loadFile(`${__dirname}/_config/config.html`)
@@ -172,7 +178,7 @@ app.setAppUserModelId(process.execPath) // Para notificaciones en Windows
     configWin.show()
     
     configWin.on('closed', () => { configWin = null })
-    //configWin.webContents.openDevTools()
+    configWin.webContents.openDevTools()
   }
 
   function configServer() {
@@ -195,7 +201,7 @@ app.setAppUserModelId(process.execPath) // Para notificaciones en Windows
       type: 'info',
       buttons: ['Aceptar'],
       title: 'Información',
-      message: 'Farmavisión - Control Turnomatic para PC\nComunicacion Visual Canarias 2021\nContacto: 928 67 29 81'
+      message: `Control Turnomatic para PC\nVersión ${app.getVersion()}\nComunicacion Visual Canarias 2021\nContacto: 928 67 29 81`
      }
     dialog.showMessageBox(appWin, options)
   }
@@ -206,6 +212,7 @@ app.setAppUserModelId(process.execPath) // Para notificaciones en Windows
 
 app.on('ready', initApp)
 
+
 ipcMain.on('getGlobal', (e, type) => {
   switch(type) {
     case 'appConf':
@@ -215,6 +222,16 @@ ipcMain.on('getGlobal', (e, type) => {
       e.returnValue = global.UI
     break
   }
+})
+
+ipcMain.on('getAppInfo', (e) => {
+  let info = {}
+  info.version = app.getVersion()
+  info.name = app.getName()
+  info.apppath = app.getAppPath()
+  info.locale = app.getLocale()
+
+  e.returnValue = info
 })
 
 ipcMain.on('saveAppConf', (e, arg) => { 
@@ -230,6 +247,7 @@ ipcMain.on('notification', (e, arg) => {
     new Notification(notification).show()
   }
 })
+
 
 // Logs
 var logs = new logger(`${app.getPath('userData')}/logs/`, appName)

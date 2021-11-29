@@ -13,21 +13,33 @@
           <input type="text" id="mostrador" title="Solo direcciones IPv4" placeholder="Mostrador 1">
         </div>
 
+        <p>Atajos de teclado</p>
+
+        <div class="atajos">
+          <div>
+            <label for="shortcutKey">Iniciador</label>
+            <select id="shortcutKey">
+              <option value="no">Sin atajos</option>
+              <option value="Ctrl">Ctrl</option>
+              <option value="Shift">Shift</option>
+              <option value="Ctrl+Alt">Ctrl + Alt</option>
+              <option value="Ctrl+Shift">Ctlr + Shift</option>
+              <option value="Alt+Shift">Alt + Shift</option>
+            </select>
+          </div>
+          <div><label for="up">Subir</label><input type="text" id="up"></div>
+          <div><label for="down">Bajar</label><input type="text" id="down"></div>
+          <div><label for="reset">Reset</label><input type="text" id="reset"></div>
+        </div>
+        
         <div>
-          <label for="shortcutKey">Tecla de atajos de teclado</label>
-          <select id="shortcutKey">
-            <option value="no">Sin atajos</option>
-            <option value="Ctrl">Ctrl</option>
-            <option value="Shift">Shift</option>
-            <option value="Ctrl+Alt">Ctrl + Alt</option>
-            <option value="Ctrl+Shift">Ctlr + Shift</option>
-            <option value="Alt+Shift">Alt + Shift</option>
-          </select>
+          <input type="checkbox" id="focusOnShortcut">
+          <label for="focusOnShortcut">Mostrar ventana al cambiar turno</label>
         </div>
 
         <div>
-          <input type="checkbox" id="focusOnShortcut">
-          <label for="focusOnShortcut">Mostrar ventana al enviar comando</label>
+          <input type="checkbox" id="showTicket">
+          <label for="showTicket">Mostrar último ticket</label>
         </div>
 
         <div>

@@ -1,9 +1,10 @@
 import {$, $$, $$$, iconNames, modalBox} from '../exports.web.js'
 
 class wSocket {
-    constructor(server, notification, logger) {
-        this.ip = server.ip
-        this.port = server.port
+    constructor(conf, notification, logger) {
+        this.ip = conf.server.ip
+        this.port = conf.server.port
+        this.showTicket = conf.showTicket
         this.notification = notification
         this.logError = logger.error
         this.currentCola = 0
@@ -57,7 +58,8 @@ class wSocket {
 
         $('num').textContent = this.turnos[this.currentCola].num
         $('texto').textContent = this.turnos[this.currentCola].texto
-        $('ticket').textContent = 'Último ticket: ' + this.tickets[this.currentCola].num
+
+        if (this.showTicket) { $('ticket').textContent = 'Último ticket: ' + this.tickets[this.currentCola].num }
 
         localStorage.setItem('currentCola', this.currentCola)
     }
@@ -94,7 +96,7 @@ class wSocket {
     }
 
     updateTicket(cola) {
-        if (cola == this.currentCola) { // Solo si estamos en la cola actual
+        if (this.showTicket && cola == this.currentCola) { // Solo si estamos en la cola actual
             $('ticket').textContent = 'Último ticket: ' + this.tickets[cola].num.toString()
         }
     }

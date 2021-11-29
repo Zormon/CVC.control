@@ -32,7 +32,7 @@ body.config {
                     display: flex;
                     align-items: center;
 
-                    input[type="text"], input[type="num"] {
+                    input[type="text"], input[type="number"] {
                         width: 60%;
                     }
 
@@ -81,7 +81,7 @@ body.config {
 
     select { overflow: auto; }
 
-    input[type="text"], input[type="num"], select {
+    input[type="text"], input[type="number"], select {
         border: 2px solid darken($light-color, 30%);
         padding: .4em;
         margin: .6em 0;
@@ -135,11 +135,22 @@ body.config {
      }
 
      
+     div {
+         &.atajos {
+             display: grid;
+             grid-template-columns: 1.8fr 1fr 1fr 1fr;
+             gap: 10px;
 
-     div.coord { /* Coordenadas de ventanas */
-        input[type="num"], input[type="text"] { 
-            width: 35%;
-            display: inline-block;
+             input[type="text"] {
+                 width: 90%;
+                 font-size: 12px;
+                 line-height: 20px;
+
+                 &::-webkit-outer-spin-button, &::-webkit-inner-spin-button {
+                    -webkit-appearance: none;
+                 }
+             }
          }
-    }
+     }
+
 }
