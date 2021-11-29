@@ -153,7 +153,7 @@ app.setAppUserModelId(process.execPath) // Para notificaciones en Windows
     let winOptions = {
       width: 600, height: 320, resizable:false, show:false, 
       icon: `${app.getAppPath()}/icon64.png`,
-      webPreferences: { spellcheck:false, contextIsolation: true, preload: path.join(__dirname, "preload.js") }
+      webPreferences: { spellcheck:false, preload: path.join(__dirname, "preload.js") }
     }
     appWin = new BrowserWindow(winOptions)
     appWin.loadFile(`${__dirname}/_index/index.html`)
