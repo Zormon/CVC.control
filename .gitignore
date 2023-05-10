@@ -1,4 +1,5 @@
 node_modules
 _build
+installers
 .gitignore
 package-lock.json
