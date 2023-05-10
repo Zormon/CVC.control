@@ -104,6 +104,7 @@ app.setAppUserModelId(process.execPath) // Para notificaciones en Windows
   }
 
   function saveConfFile(prefs, file) {
+    fs.mkdirSync( path.dirname(file), { recursive: true } )
     fs.writeFileSync(file, JSON.stringify(prefs), 'utf8')
   }
 
@@ -178,7 +179,7 @@ app.setAppUserModelId(process.execPath) // Para notificaciones en Windows
     configWin.show()
     
     configWin.on('closed', () => { configWin = null })
-    configWin.webContents.openDevTools()
+    //configWin.webContents.openDevTools()
   }
 
   function configServer() {

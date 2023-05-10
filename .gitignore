@@ -1,7 +1,4 @@
 node_modules
-node_modules_bak
-out
-res
-.vscode
+_build
 .gitignore
-yarn.lock
+package-lock.json
